@@ -6,10 +6,13 @@
 
 <script>
   export default {
-    name: 'limt',
+    name: 'App',
+    components: {},
   };
 </script>
 
 <style>
-  /* CSS */
+.el-header {
+    padding: 0;
+}
 </style>
