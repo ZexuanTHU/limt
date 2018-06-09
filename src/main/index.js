@@ -13,10 +13,10 @@ const winURL = process.env.NODE_ENV === 'development'
   ? 'http://localhost:9080'
   : `file://${__dirname}/index.html`;
 
+/**
+ * Create the browser window
+ */
 function createWindow() {
-  /**
-   * Initial window options
-   */
   mainWindow = new BrowserWindow({
     height: 563,
     useContentSize: true,

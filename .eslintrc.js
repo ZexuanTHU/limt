@@ -1,14 +1,18 @@
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
   parserOptions: {
-    sourceType: 'module'
+    "parser": "babel-eslint",
+    "ecmaVersion": 2017,
+    "sourceType": "module"
   },
   env: {
     browser: true,
     node: true
   },
-  extends: 'airbnb-base',
+  extends: [
+    'plugin:vue/recommended',
+    'google'
+  ],
   globals: {
     __static: true
   },
