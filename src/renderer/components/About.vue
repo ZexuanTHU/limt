@@ -10,6 +10,11 @@
         </el-header>
         <el-main style="background-color: #e4e4e4">
           <div style="background: white; padding: 10px;">
+            <block-tag tag-name="About LIMT"></block-tag>
+            <l-sys-info></l-sys-info>
+          </div>
+          <br/>
+          <div style="background: white; padding: 10px;">
             <block-tag tag-name="Development Team"></block-tag>
             <el-row>
               <div v-for="(member) in members" :key="member.id">
@@ -21,7 +26,8 @@
                       <span>{{member.name}}</span>
                       <div class="bottom clearfix">
                         <time class="time">{{ member.role }}</time>
-                        <el-button type="text" class="button">View More
+                        <el-button type="text" class="button" @click="viewMore">
+                          View More
                         </el-button>
                       </div>
                     </div>
@@ -43,6 +49,7 @@
   import LSide from './basic/LSide';
   import LHeader from './basic/LHeader';
   import LFooter from './basic/LFooter';
+  import LSysInfo from './basic/LSysInfo.vue';
   import BlockTag from './basic/BlockTag';
 
   let lx = require('../assets/liangxin.jpg');
@@ -51,7 +58,7 @@
 
   export default {
     name: 'About',
-    components: {LSide, LHeader, LFooter, BlockTag},
+    components: {LSide, LHeader, LFooter, LSysInfo, BlockTag},
     data() {
       return {
         members: [
@@ -77,7 +84,11 @@
         ],
       };
     },
-    methods: {},
+    methods: {
+      viewMore() {
+        this.$electron.remote.shell.openExternal('https://www.baidu.com');
+      },
+    },
   };
 </script>
 

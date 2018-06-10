@@ -108,7 +108,7 @@ import LHeader from './basic/LHeader';
 import SideBar from './basic/LSide';
 import LFooter from './basic/LFooter';
 import BlockTag from './basic/BlockTag';
-import {mapState} from 'vuex';
+// import {mapState} from 'vuex';
 
 export default {
   name: 'SetUp',
@@ -125,14 +125,10 @@ export default {
     };
   },
   computed: {
-    // states() {
-    //   return this.$store.state.MTWorkspace.states.slice(0, 2);
-    // },
-    ...mapState({
-      states: (state) => {
-        return state.MTWorkspace.states.slice(0, 2);
-      },
-    }),
+    states() {
+      let get = this.$store.getters.getGBByLabel;
+      return [get('GB_NM_PER_PIXEL'), get('GB_TIME_INTERVAL')];
+    },
   },
   methods: {
     next() {
@@ -144,7 +140,10 @@ export default {
             type: 'error',
           });
         } else {
-          this.states[this.active].value = this.inputValue;
+          this.$store.commit(
+            'CHANGE_' + this.states[this.active].label,
+            this.inputValue
+          );
           this.active++;
         }
       } else if (this.active === 2) {

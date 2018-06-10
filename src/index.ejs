@@ -19,9 +19,7 @@
 <body style="margin: 25px 0 0 0;
 background-size: cover;
 background-color: white">
-  <div style="height: 24px; width: 100%; -webkit-app-region: drag;
-  position: fixed; z-index: 9999; top: 0; background-color: white;
-  border-bottom: solid 1px #d8d8d8;"></div>
+  <div class="title-bar"></div>
   <div id="app"></div>
   <!-- Set `__static` path to static files in production -->
   <script>
@@ -31,5 +29,18 @@ background-color: white">
   </script>
   <!-- webpack builds are automatically injected -->
 </body>
+
+<style>
+  .title-bar {
+    height: 24px;
+    width: 100%;
+    -webkit-app-region: drag;
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    background-color: white;
+    border-bottom: solid 1px #d8d8d8;
+  }
+</style>
 
 </html>

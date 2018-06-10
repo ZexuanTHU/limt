@@ -30,7 +30,9 @@
               Allow .mat file within 500kb size
             </div>
           </el-upload> -->
-          <input type="file" id="mtfile" @change="handleChange">
+          <input type="file" id="mtfile" @click="handleChange">
+          <el-button @click="handleSelectFile">Select...</el-button>
+          <p>{{gb_mt_img}}</p>
         </div>
         <br/>
         <!--<div style="background: white; padding: 10px;">-->
@@ -95,7 +97,7 @@ import LHeader from './basic/LHeader';
 import LSide from './basic/LSide';
 import LFooter from './basic/LFooter';
 import BlockTag from './basic/BlockTag';
-
+import os from 'os';
 import {mapState} from 'vuex';
 
 export default {
@@ -114,7 +116,7 @@ export default {
       ],
       renderFunc(h, option) {
         // eslint-disable-next-line
-        return `<span>{ option.key } - { option.label }</span>`;
+        return <span>{ option.key } - { option.label }</span>;
       },
       transferOptions: [1, 4],
     };
@@ -124,13 +126,34 @@ export default {
       generateData: (state) => {
         return state.MTWorkspace.states;
       },
+      gb_mt_img: (state) => {
+        return state.MTWorkspace.states.slice(15, 16)[0].value;
+      },
     }),
   },
   methods: {
     handleChange() {
-      let files = this.$electron.
       // let files = document.getElementById('mtfile').files[0].path;
-      console.log(files);
+      this.$electron.remote.shell.showItemInFolder(os.homedir());
+    },
+    handleSelectFile() {
+      let ipc = this.$electron.ipcRenderer;
+      ipc.send('open-file-dialog');
+
+      ipc.on('selected-directory', (event, path) => {
+        this.gb_mt_img = path;
+      });
+    },
+    readFile(filePath) {
+      this.$electron.remote.fs.readFile(filePath, 'utf-8', (err, data) => {
+        if (err) {
+          this.$message({
+            message: 'Error during reading file: ' + err.message,
+            type: 'error',
+          });
+          return;
+        }
+      });
     },
     loadMTFile() {
       console.log(fileObj);

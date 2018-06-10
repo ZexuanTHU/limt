@@ -4,6 +4,8 @@ import { app, BrowserWindow } from 'electron' // eslint-disable-line
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
+let width = null;
+process.env.NODE_ENV === 'development' ? width = 1500 : width = 900;
 if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\') // eslint-disable-line
 }
@@ -19,8 +21,9 @@ const winURL = process.env.NODE_ENV === 'development'
 function createWindow() {
   mainWindow = new BrowserWindow({
     height: 1200,
-    width: 950,
+    width: width,
     titleBarStyle: 'hidden',
+    vibrancy: 'ultra-dark',
   });
 
   mainWindow.loadURL(winURL);
@@ -53,13 +56,24 @@ app.on('activate', () => {
  */
 
 /*
-import { autoUpdater } from 'electron-updater'
+import {autoUpdater} from 'electron-updater';
 
 autoUpdater.on('update-downloaded', () => {
-  autoUpdater.quitAndInstall()
-})
+  autoUpdater.quitAndInstall();
+});
 
 app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
-})
- */
+  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates();
+});
+*/
+
+const ipc = require('electron').ipcMain;
+const dialog = require('electron').dialog;
+
+ipc.on('open-file-dialog', function(event) {
+  dialog.showOpenDialog({
+    properties: ['openFile', 'openDirectory'],
+  }, function(files) {
+    if (files) event.sender.send('selected-directory', files);
+  });
+});
