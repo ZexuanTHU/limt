@@ -47,7 +47,39 @@ export default new Vuex.Store({
         'persistent': false,
       },
       {
-        'key': 2, 'value': '', 'disp': '',
+        'key': 2, 'value': '', 'disp': 'MT Image URL',
+        'label': 'gb_mt_imgs',
+        'size': [0, 0],
+        'bytes': 0,
+        'class': 'double',
+        'global': true,
+        'sparse': false,
+        'complex': false,
+        'nesting': {
+          'function': '',
+          'level': 0,
+        },
+      },
+      {
+        'key': 3, 'value': '', 'disp': 'MAP Image URl',
+        'label': 'gb_map_imgs',
+        'size': [
+          0,
+          0,
+        ],
+        'bytes': 0,
+        'class': 'double',
+        'global': true,
+        'sparse': false,
+        'complex': false,
+        'nesting': {
+          'function': '',
+          'level': 0,
+        },
+        'persistent': false,
+      },
+      {
+        'key': 4, 'value': 'STILL UNKNOWN', 'disp': '',
         'label': 'gb_blurred_mt_imgs',
         'size': [
           0,
@@ -83,7 +115,14 @@ export default new Vuex.Store({
       GB_TIME_INTERVAL.value = payload;
     },
     CHANGE_GB_MT_IMGS(state, payload) {
-      state.gb_mt_imgs.value = payload;
+      let GB_MT_IMGS =
+        (state.gb.find((gbVal) => gbVal.label === 'gb_mt_imgs'));
+      GB_MT_IMGS.value = payload;
+    },
+    CHANGE_GB_MAP_IMGS(state, payload) {
+      let GB_MAP_IMGS =
+        (state.gb.find((gbVal) => gbVal.label === 'gb_map_imgs'));
+      GB_MAP_IMGS.value = payload;
     },
   },
 });

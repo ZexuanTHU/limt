@@ -10,52 +10,31 @@
       </el-header>
       <el-main style="background-color: #e4e4e4">
         <div style="background: white; padding: 10px;">
-          <block-tag tag-name="Load MT Image"></block-tag>
-          <!-- <el-upload
-            class="upload-demo"
-            ref="upload"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :on-change="handleChange"
-            :file-list="fileList"
-            :http-request="loadMTFile"
-            :auto-upload="false">
-            <el-button slot="trigger" style="width: 80px;" size="small">
-              Select...
-            </el-button>
-            <el-button style="margin-left: 10px; width: 80px;" size="small"
-                       type="success"
-                       @click="loadMTFile">Load
-            </el-button>
-            <div slot="tip" class="el-upload__tip">
-              Allow .mat file within 500kb size
-            </div>
-          </el-upload> -->
-          <input type="file" id="mtfile" @click="handleChange">
-          <el-button @click="handleSelectFile">Select...</el-button>
-          <p>{{gb_mt_img}}</p>
+          <block-tag tag-name="Load MT / MAP Images"></block-tag>
+          <div>
+              <nobr>
+                <el-input size="small" placeholder="MT Images"
+                v-model="tmp_gb_mt_imgs" style="width: 30%"></el-input>
+                <el-button size="small" @click="handleSelectMTImgs">
+                  Select MT Images...
+                </el-button>
+              </nobr>
+              <br/>
+              <br/>
+              <nobr>
+                <el-input size="small" placeholder="MAP Images"
+                v-model="tmp_gb_map_imgs" style="width: 30%"></el-input>
+                <el-button size="small" @click="handleSelectMAPImgs">
+                  Select MAP Images...
+                </el-button>
+              </nobr>
+          </div>
+          <br/>
+          <el-button type="primary" size="small" @click="saveMTMAPImages">
+            Save
+          </el-button>
         </div>
         <br/>
-        <!--<div style="background: white; padding: 10px;">-->
-          <!--<block-tag tag-name="Load MAP Image"></block-tag>-->
-          <!--<el-upload-->
-            <!--class="upload-demo"-->
-            <!--ref="upload"-->
-            <!--action="https://jsonplaceholder.typicode.com/posts/"-->
-            <!--:file-list="fileList"-->
-            <!--:auto-upload="false">-->
-            <!--<el-button slot="trigger" style="width: 80px;" size="small">-->
-              <!--Select...-->
-            <!--</el-button>-->
-            <!--<el-button style="margin-left: 10px; width: 80px;"-->
-                       <!--size="small"-->
-                       <!--type="success"-->
-                       <!--@click="submitUpload">Load-->
-            <!--</el-button>-->
-            <!--<div slot="tip" class="el-upload__tip">-->
-              <!--Allow .mat file within 500kb size-->
-            <!--</div>-->
-          <!--</el-upload>-->
-        <!--</div>-->
         <br/>
         <div style="background: white; padding: 10px;">
           <block-tag tag-name="Load MT / MAP Var from Workspace"></block-tag>
@@ -72,12 +51,12 @@
               :format="{
                 noChecked:'${total}',
                 hasChecked:'${checked}/${total}'}"
-              :data="generateData">
+              :data="gb">
               <el-button class="transfer-footer" slot="left-footer" plain
                          type="danger" size="small">Sort
               </el-button>
               <el-button class="transfer-footer" slot="right-footer"
-                         type="success" size="small" @click="varSubmitload">
+                         type="success" size="small" @click="loadVar">
                 Load
               </el-button>
             </el-transfer>
@@ -97,8 +76,7 @@ import LHeader from './basic/LHeader';
 import LSide from './basic/LSide';
 import LFooter from './basic/LFooter';
 import BlockTag from './basic/BlockTag';
-import os from 'os';
-import {mapState} from 'vuex';
+import {mapState, mapGetters} from 'vuex';
 
 export default {
   components: {
@@ -109,40 +87,61 @@ export default {
   },
   data() {
     return {
-      fileList: [
-        {
-          name: 'pic1.mat',
-        },
-      ],
+      tmp_gb_mt_imgs: '',
+      tmp_gb_map_imgs: '',
       renderFunc(h, option) {
         // eslint-disable-next-line
-        return <span>{ option.key } - { option.label }</span>;
+        return (
+          <span>
+            {option.key} - {option.label}
+          </span>
+        );
       },
-      transferOptions: [1, 4],
+      transferOptions: [],
     };
   },
   computed: {
+    gb_mt_imgs() {
+      return this.getGBByLabel('gb_mt_imgs').value;
+    },
+    gb_map_imgs() {
+      return this.getGBByLabel('gb_map_imgs').value;
+    },
     ...mapState({
-      generateData: (state) => {
-        return state.MTWorkspace.states;
-      },
-      gb_mt_img: (state) => {
-        return state.MTWorkspace.states.slice(15, 16)[0].value;
+      gb: (state) => {
+        return state.gb;
       },
     }),
+    ...mapGetters([
+      'getGBByLabel',
+    ]),
   },
   methods: {
-    handleChange() {
-      // let files = document.getElementById('mtfile').files[0].path;
-      this.$electron.remote.shell.showItemInFolder(os.homedir());
-    },
-    handleSelectFile() {
+    handleSelectMTImgs() {
       let ipc = this.$electron.ipcRenderer;
-      ipc.send('open-file-dialog');
+      ipc.send('open-file-dialog-mt');
 
-      ipc.on('selected-directory', (event, path) => {
-        this.gb_mt_img = path;
+      ipc.on('selected-mt', (event, path) => {
+        console.log(path);
+        this.tmp_gb_mt_imgs = path;
       });
+    },
+    handleSelectMAPImgs() {
+      let ipc = this.$electron.ipcRenderer;
+      ipc.send('open-file-dialog-map');
+
+      ipc.on('selected-map', (event, path) => {
+        this.tmp_gb_map_imgs = path;
+      });
+    },
+    saveMTMAPImages() {
+        this.$store.commit('CHANGE_GB_MT_IMGS', this.tmp_gb_mt_imgs);
+        this.$store.commit('CHANGE_GB_MAP_IMGS', this.tmp_gb_map_imgs);
+        this.$message({
+          showClose: true,
+          message: 'Images saved!',
+          type: 'success',
+        });
     },
     readFile(filePath) {
       this.$electron.remote.fs.readFile(filePath, 'utf-8', (err, data) => {
@@ -155,19 +154,12 @@ export default {
         }
       });
     },
-    loadMTFile() {
-      console.log(fileObj);
-      this.$refs.upload.submit();
+    loadvar() {
+      this.$store.commit('CHANGE_GB_MT_IMGS', this.transferOptions[0]);
+      this.$store.commit('CHANGE_GB_MAP_IMGS', this.transferOptions[1]);
       this.$message({
         showClose: true,
-        message: 'Load success',
-        type: 'success',
-      });
-    },
-    varSubmitload() {
-      this.$message({
-        showClose: true,
-        message: 'Load success',
+        message: 'Selected var loaded!',
         type: 'success',
       });
     },

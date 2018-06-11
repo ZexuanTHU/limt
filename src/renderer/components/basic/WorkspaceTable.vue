@@ -65,7 +65,7 @@
     },
     computed: {
       workspaceData() {
-        return this.$store.state.MTWorkspace.states;
+        return this.$store.state.gb;
       },
     },
   };
