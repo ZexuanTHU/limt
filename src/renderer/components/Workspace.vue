@@ -17,8 +17,9 @@
               <el-row>
                 <block-tag tag-name="Current MT / MAP Images"></block-tag>
                 <el-col span="6">
+                  <p>{{mtFile}}</p>
                   <el-card :body-style="{ padding: '0px' }">
-                    <img src="../assets/mt.png" class="image">
+                    <img src="mtFile" class="image">
                     <div style="padding: 14px;">
                       <span>Meta Data</span>
                       <div class="bottom clearfix">
@@ -62,55 +63,68 @@
 </template>
 
 <script>
-  import LSide from './basic/LSide';
-  import LHeader from './basic/LHeader';
-  import LFooter from './basic/LFooter';
-  import WorkspaceTable from './basic/WorkspaceTable';
-  import BlockTag from './basic/BlockTag';
+import LSide from './basic/LSide';
+import LHeader from './basic/LHeader';
+import LFooter from './basic/LFooter';
+import WorkspaceTable from './basic/WorkspaceTable';
+import BlockTag from './basic/BlockTag';
 
-  export default {
-    data() {
-      return {
-        currentFileUrl: '',
-        currentFileName: '_Pig Tub 12 uM 10% Alexa647 label_200 nM EB1_50 nM ' +
+export default {
+  data() {
+    return {
+      currentFileUrl: '',
+      currentFileName:
+        '_Pig Tub 12 uM 10% Alexa647 label_200 nM EB1_50 nM ' +
         'chTOG-RFP_laser488 10%_laser561 10%_laser640 7%_exposuretime 100ms_' +
         'intervaltime 1s_35C--3_',
-      };
+    };
+  },
+  computed: {
+    mtFile() {
+      return this.$store.getters.getGBByLabel('gb_mt_imgs').value[0];
     },
-    components: {
-      LSide, LHeader, LFooter, WorkspaceTable, BlockTag,
+    mapFile() {
+      return this.$store.getters.getGBByLabel('gb_map_imgs');
     },
-  };
+  },
+  components: {
+    LSide,
+    LHeader,
+    LFooter,
+    WorkspaceTable,
+    BlockTag,
+  },
+};
 </script>
 
 <style>
-  .time {
-    font-size: 13px;
-    color: #999;
-  }
+.time {
+  font-size: 13px;
+  color: #999;
+}
 
-  .bottom {
-    margin-top: 13px;
-    line-height: 12px;
-  }
+.bottom {
+  margin-top: 13px;
+  line-height: 12px;
+}
 
-  .button {
-    padding: 0;
-    float: right;
-  }
+.button {
+  padding: 0;
+  float: right;
+}
 
-  .image {
-    width: 100%;
-    display: block;
-  }
+.image {
+  width: 100%;
+  display: block;
+}
 
-  .clearfix:before,
-  .clearfix:after {
-    display: table;
-    content: "";
-  }
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
 
-  .clearfix:after {
-    clear: both
-  }
+.clearfix:after {
+  clear: both;
+}
 </style>

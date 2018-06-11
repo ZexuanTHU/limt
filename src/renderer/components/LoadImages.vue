@@ -15,8 +15,9 @@
               <nobr>
                 <el-input size="small" placeholder="MT Images"
                 v-model="tmp_gb_mt_imgs" style="width: 30%"></el-input>
-                <el-button size="small" @click="handleSelectMTImgs">
-                  Select MT Images...
+                <el-button type="primary" plain size="small"
+                @click="handleSelectMTImgs">
+                  Select...
                 </el-button>
               </nobr>
               <br/>
@@ -24,14 +25,15 @@
               <nobr>
                 <el-input size="small" placeholder="MAP Images"
                 v-model="tmp_gb_map_imgs" style="width: 30%"></el-input>
-                <el-button size="small" @click="handleSelectMAPImgs">
-                  Select MAP Images...
+                <el-button type="primary" plain size="small"
+                @click="handleSelectMAPImgs">
+                  Select...
                 </el-button>
               </nobr>
           </div>
           <br/>
-          <el-button type="primary" size="small" @click="saveMTMAPImages">
-            Save
+          <el-button type="success" size="small" @click="saveMTMAPImages">
+            Load
           </el-button>
         </div>
         <br/>
@@ -45,7 +47,6 @@
               filterable
               filter-placeholder="Search var name here"
               :left-default-checked="[2, 3]"
-              :right-default-checked="[1]"
               :render-content="renderFunc"
               :titles="['Source', 'Target']"
               :format="{

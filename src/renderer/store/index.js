@@ -79,14 +79,11 @@ export default new Vuex.Store({
         'persistent': false,
       },
       {
-        'key': 4, 'value': 'STILL UNKNOWN', 'disp': '',
-        'label': 'gb_blurred_mt_imgs',
-        'size': [
-          0,
-          0,
-        ],
+        'key': 4, 'value': '', 'disp': 'Awaiting Loaded .mat File',
+        'label': 'mt_file',
+        'size': [0, 0],
         'bytes': 0,
-        'class': 'double',
+        'class': 'char',
         'global': true,
         'sparse': false,
         'complex': false,

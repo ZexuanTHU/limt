@@ -85,3 +85,11 @@ ipc.on('open-file-dialog-map', function(event) {
     if (files) event.sender.send('selected-map', files);
   });
 });
+
+ipc.on('open-file-dialog-mat', function(event) {
+  dialog.showOpenDialog({
+    properties: ['openFile', 'openDirectory'],
+  }, function(files) {
+    if (files) event.sender.send('selected-mat', files);
+  });
+});

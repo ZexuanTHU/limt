@@ -11,25 +11,14 @@
         <el-main>
           <div style="background: white; padding: 10px;">
             <block-tag tag-name="Load Workspace (.mat)"></block-tag>
-            <el-upload
-              class="upload-demo"
-              ref="upload"
-              action="https://jsonplaceholder.typicode.com/posts/"
-              :on-preview="handlePreview"
-              :on-remove="handleRemove"
-              :file-list="fileList"
-              :auto-upload="false">
-              <el-button slot="trigger" style="width: 80px;" size="small">
+            <nobr>
+              <el-input size="small" placeholder=".mat File"
+              v-model="tmp_mat_file" style="width: 30%"></el-input>
+              <el-button type="primary" plain size="small"
+              @click="handleSelectMATFile">
                 Select...
               </el-button>
-              <el-button style="margin-left: 10px; width: 80px;" size="small"
-                         type="success"
-                         @click="submitUpload">Load
-              </el-button>
-              <div slot="tip" class="el-upload__tip">
-                Allow .mat file within 500kb size
-              </div>
-            </el-upload>
+            </nobr>
           </div>
           <br/>
           <div style="background: white; padding: 10px;">
@@ -46,56 +35,58 @@
 </template>
 
 <script>
-  import LHeader from './basic/LHeader';
-  import SideBar from './basic/LSide';
-  import LFooter from './basic/LFooter';
-  import WorkspaceTable from './basic/WorkspaceTable';
-  import BlockTag from './basic/BlockTag';
+import LHeader from './basic/LHeader';
+import SideBar from './basic/LSide';
+import LFooter from './basic/LFooter';
+import WorkspaceTable from './basic/WorkspaceTable';
+import BlockTag from './basic/BlockTag';
 
-  export default {
-    name: 'SaveLoadMat',
-    components: {
-      SideBar,
-      LHeader,
-      LFooter,
-      WorkspaceTable,
-      BlockTag,
+export default {
+  name: 'SaveLoadMat',
+  components: {
+    SideBar,
+    LHeader,
+    LFooter,
+    WorkspaceTable,
+    BlockTag,
+  },
+  data() {
+    return {
+      tmp_mat_file: '',
+    };
+  },
+  methods: {
+    handleSelectMATFile() {
+      let ipc = this.$electron.ipcRenderer;
+      ipc.send('open-file-dialog-mat');
+
+      ipc.on('selected-mat', (event, path) => {
+        console.log(path);
+        this.tmp_mat_file = path;
+      });
     },
-    data() {
-      return {
-        fileList: [{
-          name: 'pic1.mat',
-          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-        }, {
-          name: 'pic2.mat',
-          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-        }],
-      };
-    },
-    methods: {
-      submitUpload() {
-        this.$refs.upload.submit();
-        let that = this;
-        setTimeout(function() {
-          that.$notify({
-            title: 'New MATLAB workspace loaded',
-            message: 'You can check it in the Workspace',
-            duration: 0,
-            offset: 25,
-          });
-        }, 2000);
-        this.$message({
-          showClose: true,
-          message: 'Load success',
-          type: 'success',
+    loadMAT() {
+      let that = this;
+      setTimeout(function() {
+        that.$notify({
+          title: 'New MATLAB workspace loaded',
+          message: 'You can check it in the Workspace',
+          duration: 0,
+          offset: 25,
         });
-      },
-      handleRemove(file, fileList) {
-        console.log(file, fileList);
-      },
-      handlePreview(file) {
-        console.log(file);
-      },
+      }, 2000);
+      this.$message({
+        showClose: true,
+        message: 'Load success',
+        type: 'success',
+      });
     },
-  };
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+  },
+};
 </script>
