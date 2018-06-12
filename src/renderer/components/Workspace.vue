@@ -18,17 +18,22 @@
                 <block-tag tag-name="Current MT / MAP Images"></block-tag>
                 <el-col span="6">
                   <el-card :body-style="{ padding: '0px' }">
-                    <img :src="mtFile"
-                    id="test-img" class="image">
-                    <div style="padding: 14px;">
-                      <span>Meta Data</span>
-                      <div class="bottom clearfix">
-                        <time class="time">{{ currentFileName }}</time>
-                        <br/>
-                        <br/>
-                        <el-button type="text" class="button">View Frames
-                        </el-button>
+                    <div v-if="mtFile !== 'file://'">
+                      <img :src="mtFile"
+                      id="test-img" class="image">
+                      <div style="padding: 14px;">
+                        <span>Meta Data</span>
+                        <div class="bottom clearfix">
+                          <time class="time">{{ currentFileName }}</time>
+                          <br/>
+                          <br/>
+                          <el-button type="text" class="button">View Frames
+                          </el-button>
+                        </div>
                       </div>
+                    </div>
+                    <div>
+                      <span>Awaiting Loading...</span>
                     </div>
                   </el-card>
                 </el-col>
@@ -37,18 +42,24 @@
                 </el-col>
                 <el-col span="6">
                   <el-card :body-style="{ padding: '0px' }">
-                    <img
-                    :src=mapFile
-                    class="image">
-                    <div style="padding: 14px;">
-                      <span>Meta Data</span>
-                      <div class="bottom clearfix">
-                        <time class="time">{{ currentFileName }}</time>
-                        <br/>
-                        <br/>
-                        <el-button type="text" class="button">View Frames
-                        </el-button>
+                    <div v-if="mapFile !== 'file://'">
+                      <img
+                      :src=mapFile
+                      alt="Awaiting Loading..."
+                      class="image">
+                      <div style="padding: 14px;">
+                        <span>Meta Data</span>
+                        <div class="bottom clearfix">
+                          <time class="time">{{ currentFileName }}</time>
+                          <br/>
+                          <br/>
+                          <el-button type="text" class="button">View Frames
+                          </el-button>
+                        </div>
                       </div>
+                    </div>
+                    <div>
+                      <span>Awaiting Loading...</span>
                     </div>
                   </el-card>
                 </el-col>
