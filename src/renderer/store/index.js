@@ -97,10 +97,25 @@ export default new Vuex.Store({
         persistent: false,
       },
     ],
+    imgBuffer: [
+      {
+        key: 0,
+        label: 'mt_img_buffer',
+        value: null,
+      },
+      {
+        key: 1,
+        label: 'map_img_buffer',
+        value: null,
+      },
+    ],
   },
   getters: {
     getGBByLabel: (state) => (label) => {
       return state.gb.find((gbVal) => gbVal.label === label);
+    },
+    getBufferByLabel: (state) => (label) => {
+      return state.imgBuffer.find((buffer) => buffer.label === label);
     },
   },
   mutations: {
@@ -127,6 +142,18 @@ export default new Vuex.Store({
     CHANGE_GB_MAT_FILE(state, payload) {
       let GB_MAT_FILE = state.gb.find((gbVal) => gbVal.label === 'gb_mat_file');
       GB_MAT_FILE.value = payload;
+    },
+    LOAD_MT_IMG_BUFFER(state, payload) {
+      let MT_IMG_BUFFER = state.imgBuffer.find(
+        (gbVal) => gbVal.label === 'mt_img_buffer'
+      );
+      MT_IMG_BUFFER.value = payload;
+    },
+    LOAD_MAP_IMG_BUFFER(state, payload) {
+      let MAP_IMG_BUFFER = state.imgBuffer.find(
+        (gbVal) => gbVal.label === 'map_img_buffer'
+      );
+      MAP_IMG_BUFFER.value = payload;
     },
   },
 });

@@ -1,19 +1,23 @@
-import { app, BrowserWindow } from 'electron' // eslint-disable-line
+import { app, BrowserWindow } from 'electron'; // eslint-disable-line
+const fs = require('fs');
 
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
 let width = null;
-process.env.NODE_ENV === 'development' ? width = 1500 : width = 900;
+process.env.NODE_ENV === 'development' ? (width = 1500) : (width = 900);
 if (process.env.NODE_ENV !== 'development') {
-  global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\') // eslint-disable-line
+  global.__static = require('path')
+    .join(__dirname, '/static')
+    .replace(/\\/g, '\\\\'); // eslint-disable-line
 }
 
 let mainWindow;
-const winURL = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:9080/'
-  : `file://${__dirname}/index.html`;
+const winURL =
+  process.env.NODE_ENV === 'development'
+    ? 'http://localhost:9080/'
+    : `file://${__dirname}/index.html`;
 
 /**
  * Create the browser window
@@ -24,6 +28,7 @@ function createWindow() {
     width: width,
     titleBarStyle: 'hidden',
     vibrancy: 'ultra-dark',
+    webPreferences: {webSecurity: false},
   });
 
   mainWindow.loadURL(winURL);
@@ -71,25 +76,53 @@ const ipc = require('electron').ipcMain;
 const dialog = require('electron').dialog;
 
 ipc.on('open-file-dialog-mt', function(event) {
-  dialog.showOpenDialog({
-    properties: ['openFile', 'openDirectory'],
-  }, function(files) {
-    if (files) event.sender.send('selected-mt', files);
-  });
+  dialog.showOpenDialog(
+    {
+      properties: ['openFile', 'openDirectory'],
+    },
+    function(files) {
+      if (files) event.sender.send('selected-mt', files);
+    }
+  );
 });
 
 ipc.on('open-file-dialog-map', function(event) {
-  dialog.showOpenDialog({
-    properties: ['openFile', 'openDirectory'],
-  }, function(files) {
-    if (files) event.sender.send('selected-map', files);
-  });
+  dialog.showOpenDialog(
+    {
+      properties: ['openFile', 'openDirectory'],
+    },
+    function(files) {
+      if (files) event.sender.send('selected-map', files);
+    }
+  );
 });
 
 ipc.on('open-file-dialog-mat', function(event) {
-  dialog.showOpenDialog({
-    properties: ['openFile', 'openDirectory'],
-  }, function(files) {
-    if (files) event.sender.send('selected-mat', files);
-  });
+  dialog.showOpenDialog(
+    {
+      properties: ['openFile', 'openDirectory'],
+    },
+    function(files) {
+      if (files) event.sender.send('selected-mat', files);
+    }
+  );
+});
+
+ipc.on('read-file-by-path', (event) => {
+  dialog.showOpenDialog(
+    {
+      properties: ['openFile', 'openDirectory'],
+    },
+    (files) => {
+      if (files) {
+        fs.readFile(files, (err, fileData) => {
+          if (err) {
+            alert('An error happened during reading file');
+            return;
+          }
+          console.log('File content ' + fileData);
+        });
+      }
+    }
+  );
 });

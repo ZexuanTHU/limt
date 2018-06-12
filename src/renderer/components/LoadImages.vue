@@ -78,6 +78,7 @@ import LSide from './basic/LSide';
 import LFooter from './basic/LFooter';
 import BlockTag from './basic/BlockTag';
 import {mapState, mapGetters} from 'vuex';
+import fs from 'fs';
 
 export default {
   components: {
@@ -123,8 +124,18 @@ export default {
       ipc.send('open-file-dialog-mt');
 
       ipc.on('selected-mt', (event, path) => {
-        console.log(path);
-        this.tmp_gb_mt_imgs = path;
+        this.tmp_gb_mt_imgs = path[0];
+        if (path) {
+          fs.readFile(path[0], '', (err, data) => {
+            if (err) {
+              console.log(err);
+              return;
+            }
+            console.log(data);
+            this.$store.commit('LOAD_MT_IMG_BUFFER', data.toString('base64'));
+            console.log(data.toString('base64'));
+          });
+        }
       });
     },
     handleSelectMAPImgs() {
@@ -132,7 +143,18 @@ export default {
       ipc.send('open-file-dialog-map');
 
       ipc.on('selected-map', (event, path) => {
-        this.tmp_gb_map_imgs = path;
+        this.tmp_gb_map_imgs = path[0];
+        if (path) {
+          fs.readFile(path[0], '', (err, data) => {
+            if (err) {
+              console.log(err);
+              return;
+            }
+            console.log(data);
+            this.$store.commit('LOAD_MAP_IMG_BUFFER', data.toString('base64'));
+            console.log(data.toString('base64'));
+          });
+        }
       });
     },
     saveMTMAPImages() {
@@ -153,9 +175,10 @@ export default {
           });
           return;
         }
+        console.log(data);
       });
     },
-    loadvar() {
+    loadVar() {
       this.$store.commit('CHANGE_GB_MT_IMGS', this.transferOptions[0]);
       this.$store.commit('CHANGE_GB_MAP_IMGS', this.transferOptions[1]);
       this.$message({

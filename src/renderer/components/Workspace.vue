@@ -17,9 +17,9 @@
               <el-row>
                 <block-tag tag-name="Current MT / MAP Images"></block-tag>
                 <el-col span="6">
-                  <p>{{mtFile}}</p>
                   <el-card :body-style="{ padding: '0px' }">
-                    <img src="mtFile" class="image">
+                    <img :src="mtFile"
+                    id="test-img" class="image">
                     <div style="padding: 14px;">
                       <span>Meta Data</span>
                       <div class="bottom clearfix">
@@ -37,7 +37,9 @@
                 </el-col>
                 <el-col span="6">
                   <el-card :body-style="{ padding: '0px' }">
-                    <img src="../assets/mt.png" class="image">
+                    <img
+                    :src=mapFile
+                    class="image">
                     <div style="padding: 14px;">
                       <span>Meta Data</span>
                       <div class="bottom clearfix">
@@ -81,10 +83,13 @@ export default {
   },
   computed: {
     mtFile() {
-      return this.$store.getters.getGBByLabel('gb_mt_imgs').value[0];
+      return 'file://' + this.$store.getters.getGBByLabel('gb_mt_imgs').value;
     },
     mapFile() {
-      return this.$store.getters.getGBByLabel('gb_map_imgs');
+      return 'file://' + this.$store.getters.getGBByLabel('gb_map_imgs').value;
+    },
+    testImg() {
+      return this.$store.getters.getBufferByLabel('mt_img_buffer');
     },
   },
   components: {
