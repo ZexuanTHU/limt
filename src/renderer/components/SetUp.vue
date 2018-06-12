@@ -104,7 +104,6 @@
 </template>
 
 <script>
-// @ts-check
 import LHeader from './basic/LHeader';
 import SideBar from './basic/LSide';
 import LFooter from './basic/LFooter';

@@ -13,10 +13,14 @@
             <block-tag tag-name="Load Workspace (.mat)"></block-tag>
             <nobr>
               <el-input size="small" placeholder=".mat File"
-              v-model="tmp_mat_file" style="width: 30%"></el-input>
+              v-model="tmp_gb_mat_file" style="width: 30%"></el-input>
               <el-button type="primary" plain size="small"
               @click="handleSelectMATFile">
                 Select...
+              </el-button>
+              <el-button type="success" size="small"
+              @click="loadMATFile">
+              Load
               </el-button>
             </nobr>
           </div>
@@ -52,7 +56,7 @@ export default {
   },
   data() {
     return {
-      tmp_mat_file: '',
+      tmp_gb_mat_file: '',
     };
   },
   methods: {
@@ -62,10 +66,13 @@ export default {
 
       ipc.on('selected-mat', (event, path) => {
         console.log(path);
-        this.tmp_mat_file = path;
+        this.tmp_gb_mat_file = path[0];
       });
     },
-    loadMAT() {
+    loadMATFile() {
+      this.$store.commit(
+        'CHANGE_GB_MAT_FILE', this.tmp_gb_mat_file
+      );
       let that = this;
       setTimeout(function() {
         that.$notify({
@@ -80,6 +87,9 @@ export default {
         message: 'Load success',
         type: 'success',
       });
+    },
+    // TODO: readMATFile()
+    readMATFile() {
     },
     handleRemove(file, fileList) {
       console.log(file, fileList);
