@@ -1,5 +1,4 @@
 import {app, BrowserWindow} from 'electron'; // eslint-disable-line
-const fs = require('fs');
 
 /**
  * Set `__static` path to static files in production
