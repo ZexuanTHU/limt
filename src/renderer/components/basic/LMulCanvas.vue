@@ -21,15 +21,40 @@
       </el-col>
       <el-col span="10" offset="2">
         <el-card shadow="hover">
-          <span class="nobr">
-            <p>Layer:
-              <el-input-number v-model="currentLayer" size="mini">
-              </el-input-number>
-            </p>
-          </span>
-        {{imgWidth[currentLayer - 1]}}
-        {{imgHeight[currentLayer - 1]}}
-        {{currentLayer}}
+          <el-checkbox-group v-model="rgbOption" size="mini">
+            <el-checkbox-button
+             v-for="c in rgb"
+             :label="c"
+             :key="c">{{c}}
+            </el-checkbox-button>
+          </el-checkbox-group>
+          <el-slider
+            v-model="currentLayer"
+            max="900"
+            show-tooltip="true"
+          >
+          </el-slider>
+          <el-input
+            readonly
+            v-model="currentLayerStep"
+            size="mini"
+            :min="1"
+            :max="imgLayersNum"
+          >
+            <template slot="prepend">Layer</template>
+          </el-input>
+          <br/>
+          <br/>
+            <el-input
+              v-model="imgWidth[currentLayer - 1]" size="mini" readonly>
+              <template slot="prepend">Width</template>
+            </el-input>
+          <br/>
+          <br/>
+            <el-input
+              v-model="imgHeight[currentLayer - 1]" size="mini" readonly>
+                <template slot="prepend">Height</template>
+            </el-input>
         </el-card>
       </el-col>
     </el-row>
@@ -43,6 +68,7 @@
 </template>
 
 <script>
+const rgbOptions = ['R', 'G', 'B'];
 export default {
   props: [
     'buffer',
@@ -51,11 +77,8 @@ export default {
   data() {
     return {
       currentLayer: 1,
-      elcardStyle: {
-        padding: 0,
-        width: '170px',
-        height: '512px',
-      },
+      rgbOption: ['R'],
+      rgb: rgbOptions,
     };
   },
   computed: {
@@ -70,6 +93,16 @@ export default {
     },
     imgHeight() {
       return this.imgBuffer.height;
+    },
+    elcardStyle() {
+      return {
+        padding: 0,
+        width: this.imgWidth,
+        height: this.imgHeight,
+      };
+    },
+    currentLayerStep() {
+      return `${this.currentLayer} / ${this.imgLayersNum}`;
     },
   },
   created() {
