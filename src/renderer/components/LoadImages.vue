@@ -78,6 +78,7 @@ import LSide from './basic/LSide';
 import LFooter from './basic/LFooter';
 import BlockTag from './basic/BlockTag';
 import {mapState, mapGetters} from 'vuex';
+const UTIF = require('utif');
 import fs from 'fs';
 
 export default {
@@ -125,17 +126,6 @@ export default {
 
       ipc.on('selected-mt', (event, path) => {
         this.tmp_gb_mt_imgs = path[0];
-        if (path) {
-          fs.readFile(path[0], '', (err, data) => {
-            if (err) {
-              console.log(err);
-              return;
-            }
-            console.log(data);
-            this.$store.commit('LOAD_MT_IMG_BUFFER', data.toString('base64'));
-            console.log(data.toString('base64'));
-          });
-        }
       });
     },
     handleSelectMAPImgs() {
@@ -144,38 +134,73 @@ export default {
 
       ipc.on('selected-map', (event, path) => {
         this.tmp_gb_map_imgs = path[0];
-        if (path) {
-          fs.readFile(path[0], '', (err, data) => {
-            if (err) {
-              console.log(err);
-              return;
-            }
-            console.log(data);
-            this.$store.commit('LOAD_MAP_IMG_BUFFER', data.toString('base64'));
-            console.log(data.toString('base64'));
-          });
-        }
       });
     },
-    saveMTMAPImages() {
+    loadMTImgBuffer() {
+      if (this.tmp_gb_mt_imgs) {
+        // commit 'CHANGE_GT_MT_IMGS' from tmpVal
         this.$store.commit('CHANGE_GB_MT_IMGS', this.tmp_gb_mt_imgs);
-        this.$store.commit('CHANGE_GB_MAP_IMGS', this.tmp_gb_map_imgs);
-        this.$message({
-          showClose: true,
-          message: 'Images saved!',
-          type: 'success',
+
+        // convert .tif to rgbArray
+        fs.readFile(this.tmp_gb_mt_imgs, (err, data) => {
+          if (err) {
+            console.log(err);
+            return;
+          }
+          console.log(data);
+          let rgba = [];
+          if (data) {
+            let ifds = UTIF.decode(data);
+            UTIF.decodeImages(data, ifds);
+            for (let i = 0; i < ifds.length; i++) {
+              rgba[i] = UTIF.toRGBA8(ifds[i]);
+            }
+          }
+
+          // commit 'LOAD_MT_IMG_BUFFER" from rgbArray
+          this.$store.commit('LOAD_MT_IMG_BUFFER', rgba);
+          console.log(rgba);
         });
+      }
+      this.$store.commit('CHANGE_GB_MAP_IMGS', this.tmp_gb_map_imgs);
     },
-    readFile(filePath) {
-      this.$electron.remote.fs.readFile(filePath, 'utf-8', (err, data) => {
-        if (err) {
-          this.$message({
-            message: 'Error during reading file: ' + err.message,
-            type: 'error',
-          });
-          return;
-        }
-        console.log(data);
+    loadMAPImgBuffer() {
+      if (this.tmp_gb_mt_imgs) {
+        // commit 'CHANGE_GT_MAP_IMGS' from tmpVal
+        this.$store.commit('CHANGE_GB_MAP_IMGS', this.tmp_gb_map_imgs);
+
+        // convert .tif to rgbArray
+        fs.readFile(this.tmp_gb_map_imgs, (err, data) => {
+          if (err) {
+            console.log(err);
+            return;
+          }
+          console.log(data);
+          let rgba = [];
+          if (data) {
+            let ifds = UTIF.decode(data);
+            UTIF.decodeImages(data, ifds);
+            for (let i = 0; i < ifds.length; i++) {
+              rgba[i] = UTIF.toRGBA8(ifds[i]);
+            }
+          }
+
+          // commit 'LOAD_MAP_IMG_BUFFER" from rgbArray
+          this.$store.commit('LOAD_MAP_IMG_BUFFER', rgba);
+          console.log(rgba);
+        });
+      }
+    },
+    saveMTMAPImages() {
+      // commit imgs PATH and BUffer
+      this.loadMTImgBuffer();
+      this.loadMAPImgBuffer();
+
+      // show success img
+      this.$message({
+        showClose: true,
+        message: 'Images saved!',
+        type: 'success',
       });
     },
     loadVar() {

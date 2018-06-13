@@ -58,6 +58,8 @@
   "dependencies": {
     "axios": "^0.16.1",
     "element-ui": "^2.3.9",
+    "tiff.js": "^1.0.0",
+    "utif": "^2.0.0",
     "vue": "^2.5.16",
     "vue-codemirror-lite": "^1.0.4",
     "vue-electron": "^1.0.6",

@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 
 import modules from './modules';
 
+// @ts-ignore
 Vue.use(Vuex);
 
 export default new Vuex.Store({

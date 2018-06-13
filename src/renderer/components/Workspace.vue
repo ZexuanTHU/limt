@@ -13,14 +13,15 @@
             <div style="background: white; padding: 10px;">
               <block-tag tag-name="MATLAB Workspace"></block-tag>
               <WorkspaceTable></WorkspaceTable>
-              <br/>
+            </div>
+            <br/>
+            <div style="background: white; padding: 10px;">
               <el-row>
                 <block-tag tag-name="Current MT / MAP Images"></block-tag>
                 <el-col span="6">
                   <el-card :body-style="{ padding: '0px' }">
                     <div v-if="mtFile !== 'file://'">
-                      <img :src="mtFile"
-                      id="test-img" class="image">
+                      <img :src="mtFile" id="test-img" class="image">
                       <div style="padding: 14px;">
                         <span>Meta Data</span>
                         <div class="bottom clearfix">
@@ -43,10 +44,7 @@
                 <el-col span="6">
                   <el-card :body-style="{ padding: '0px' }">
                     <div v-if="mapFile !== 'file://'">
-                      <img
-                      :src=mapFile
-                      alt="Awaiting Loading..."
-                      class="image">
+                      <img :src=mapFile alt="Awaiting Loading..." class="image">
                       <div style="padding: 14px;">
                         <span>Meta Data</span>
                         <div class="bottom clearfix">
@@ -64,6 +62,15 @@
                   </el-card>
                 </el-col>
               </el-row>
+              <br/>
+            </div>
+            <br/>
+            <div style="background: white; padding: 10px;">
+              <block-tag tag-name="TIFF canvas">
+              </block-tag>
+              <canvas id='mt-img'>
+              </canvas>
+              <l-canvas></l-canvas>
             </div>
           </el-main>
           <el-footer style="background: #e4e4e4;">
@@ -81,6 +88,10 @@ import LHeader from './basic/LHeader';
 import LFooter from './basic/LFooter';
 import WorkspaceTable from './basic/WorkspaceTable';
 import BlockTag from './basic/BlockTag';
+import LCanvas from './basic/LCanvas';
+import {Tiff} from 'tiff.js';
+const UTIF = require('utif');
+import {fs} from 'fs';
 
 export default {
   data() {
@@ -92,9 +103,34 @@ export default {
         'intervaltime 1s_35C--3_',
     };
   },
+  methods: {
+    drawMT() {
+      let path = this.$store.getters.getGBByLabel('gb_mt_img').value;
+      fs.readFileSync(path, (err, data) => {
+        if (err) {
+          console.log('Error during reading');
+        }
+        if (data) {
+          let ifds = UTIF.decode(data);
+          UTIF.decodeImages(data, ifds);
+          let rgba = [];
+          for (let i = 0; i < ifds.length; i++) {
+            rgba[i] = UTIF.toRGBA8(ifds[i]);
+          }
+        }
+      });
+    },
+  },
   computed: {
+    mtFileObj() {
+      let path = this.$store.getters.getGBByLabel('gb_mt_img').value;
+      let input = fs.readFileSync(path);
+      let img = new Tiff({buffer: input});
+      console.log(img.height);
+      return img.width;
+    },
     mtFile() {
-      return 'file://' + this.$store.getters.getGBByLabel('gb_mt_imgs').value;
+      return 'file:///Users/shian/desktop/bead1.tif';
     },
     mapFile() {
       return 'file://' + this.$store.getters.getGBByLabel('gb_map_imgs').value;
@@ -109,6 +145,7 @@ export default {
     LFooter,
     WorkspaceTable,
     BlockTag,
+    LCanvas,
   },
 };
 </script>
