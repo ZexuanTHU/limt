@@ -154,11 +154,14 @@ export default {
             UTIF.decodeImages(data, ifds);
             for (let i = 0; i < ifds.length; i++) {
               rgba[i] = UTIF.toRGBA8(ifds[i]);
+              // console.log(rgba[i]);
             }
+            console.log('convert done');
           }
 
           // commit 'LOAD_MT_IMG_BUFFER" from rgbArray
           this.$store.commit('LOAD_MT_IMG_BUFFER', rgba);
+          console.log('commit done');
           console.log(rgba);
         });
       }
@@ -183,10 +186,12 @@ export default {
             for (let i = 0; i < ifds.length; i++) {
               rgba[i] = UTIF.toRGBA8(ifds[i]);
             }
+            console.log('convert done');
           }
 
           // commit 'LOAD_MAP_IMG_BUFFER" from rgbArray
           this.$store.commit('LOAD_MAP_IMG_BUFFER', rgba);
+          console.log('commit done');
           console.log(rgba);
         });
       }

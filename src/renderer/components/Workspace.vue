@@ -18,46 +18,36 @@
             <div style="background: white; padding: 10px;">
               <el-row>
                 <block-tag tag-name="Current MT / MAP Images"></block-tag>
-                <el-col span="6">
+                <el-col span="4">
                   <el-card :body-style="{ padding: '0px' }">
-                    <div v-if="mtFile !== 'file://'">
-                      <img :src="mtFile" id="test-img" class="image">
-                      <div style="padding: 14px;">
-                        <span>Meta Data</span>
-                        <div class="bottom clearfix">
-                          <time class="time">{{ currentFileName }}</time>
-                          <br/>
-                          <br/>
-                          <el-button type="text" class="button">View Frames
-                          </el-button>
-                        </div>
+                    <canvas id='mt-img' class="canvas"
+                      height="512px" width="170px"></canvas>
+                    <div style="padding: 14px;">
+                      <span>Meta Data</span>
+                      <div class="bottom clearfix">
+                        <time class="time">{{ currentFileName }}</time>
+                        <br/>
+                        <br/>
+                        <el-button @click="putMTImg">Refresh</el-button>
                       </div>
-                    </div>
-                    <div>
-                      <span>Awaiting Loading...</span>
                     </div>
                   </el-card>
                 </el-col>
                 <el-col span="2">
                   <p></p>
                 </el-col>
-                <el-col span="6">
+                <el-col span="4">
                   <el-card :body-style="{ padding: '0px' }">
-                    <div v-if="mapFile !== 'file://'">
-                      <img :src=mapFile alt="Awaiting Loading..." class="image">
-                      <div style="padding: 14px;">
-                        <span>Meta Data</span>
-                        <div class="bottom clearfix">
-                          <time class="time">{{ currentFileName }}</time>
-                          <br/>
-                          <br/>
-                          <el-button type="text" class="button">View Frames
-                          </el-button>
-                        </div>
+                    <canvas id='map-img' class="canvas"
+                      height="512px" width="170px"></canvas>
+                    <div style="padding: 14px;">
+                      <span>Meta Data</span>
+                      <div class="bottom clearfix">
+                        <time class="time">{{ currentFileName }}</time>
+                        <br/>
+                        <br/>
+                        <el-button @click="putMAPImg">Refresh</el-button>
                       </div>
-                    </div>
-                    <div>
-                      <span>Awaiting Loading...</span>
                     </div>
                   </el-card>
                 </el-col>
@@ -66,11 +56,10 @@
             </div>
             <br/>
             <div style="background: white; padding: 10px;">
-              <block-tag tag-name="TIFF canvas">
+              <block-tag tag-name="mul canvas">
+                <l-mul-canvas></l-mul-canvas>
               </block-tag>
-              <canvas id='mt-img'>
-              </canvas>
-              <l-canvas></l-canvas>
+              <l-mul-canvas buffer="mt_img_buffer"></l-mul-canvas>
             </div>
           </el-main>
           <el-footer style="background: #e4e4e4;">
@@ -89,9 +78,7 @@ import LFooter from './basic/LFooter';
 import WorkspaceTable from './basic/WorkspaceTable';
 import BlockTag from './basic/BlockTag';
 import LCanvas from './basic/LCanvas';
-import {Tiff} from 'tiff.js';
-const UTIF = require('utif');
-import {fs} from 'fs';
+import LMulCanvas from './basic/LMulCanvas';
 
 export default {
   data() {
@@ -104,40 +91,26 @@ export default {
     };
   },
   methods: {
-    drawMT() {
-      let path = this.$store.getters.getGBByLabel('gb_mt_img').value;
-      fs.readFileSync(path, (err, data) => {
-        if (err) {
-          console.log('Error during reading');
-        }
-        if (data) {
-          let ifds = UTIF.decode(data);
-          UTIF.decodeImages(data, ifds);
-          let rgba = [];
-          for (let i = 0; i < ifds.length; i++) {
-            rgba[i] = UTIF.toRGBA8(ifds[i]);
-          }
-        }
-      });
+    putMTImg() {
+      let c = document.getElementById('mt-img');
+      let ctx = c.getContext('2d');
+      let img = this.$store.getters.getBufferByLabel('mt_img_buffer').value[0];
+      let imgClamp = new Uint8ClampedArray(img);
+      console.log(imgClamp.length);
+      let imgData = new ImageData(imgClamp, 2 * 85, 2 * 256);
+      ctx.putImageData(imgData, 0, 0);
+    },
+    putMAPImg() {
+      let c = document.getElementById('map-img');
+      let ctx = c.getContext('2d');
+      let img = this.$store.getters.getBufferByLabel('map_img_buffer').value[0];
+      let imgClamp = new Uint8ClampedArray(img);
+      console.log(imgClamp.length);
+      let imgData = new ImageData(imgClamp, 2 * 85, 2 * 256);
+      ctx.putImageData(imgData, 0, 0);
     },
   },
   computed: {
-    mtFileObj() {
-      let path = this.$store.getters.getGBByLabel('gb_mt_img').value;
-      let input = fs.readFileSync(path);
-      let img = new Tiff({buffer: input});
-      console.log(img.height);
-      return img.width;
-    },
-    mtFile() {
-      return 'file:///Users/shian/desktop/bead1.tif';
-    },
-    mapFile() {
-      return 'file://' + this.$store.getters.getGBByLabel('gb_map_imgs').value;
-    },
-    testImg() {
-      return this.$store.getters.getBufferByLabel('mt_img_buffer');
-    },
   },
   components: {
     LSide,
@@ -146,6 +119,7 @@ export default {
     WorkspaceTable,
     BlockTag,
     LCanvas,
+    LMulCanvas,
   },
 };
 </script>
@@ -164,6 +138,11 @@ export default {
 .button {
   padding: 0;
   float: right;
+}
+
+.canvas {
+  width: 100%;
+  display: block;
 }
 
 .image {

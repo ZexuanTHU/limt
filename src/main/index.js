@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'; // eslint-disable-line
+import {app, BrowserWindow} from 'electron'; // eslint-disable-line
 const fs = require('fs');
 
 /**
@@ -8,6 +8,7 @@ const fs = require('fs');
 let width = null;
 process.env.NODE_ENV === 'development' ? (width = 1500) : (width = 900);
 if (process.env.NODE_ENV !== 'development') {
+  // @ts-ignore
   global.__static = require('path')
     .join(__dirname, '/static')
     .replace(/\\/g, '\\\\'); // eslint-disable-line
@@ -104,25 +105,6 @@ ipc.on('open-file-dialog-mat', function(event) {
     },
     function(files) {
       if (files) event.sender.send('selected-mat', files);
-    }
-  );
-});
-
-ipc.on('read-file-by-path', (event) => {
-  dialog.showOpenDialog(
-    {
-      properties: ['openFile', 'openDirectory'],
-    },
-    (files) => {
-      if (files) {
-        fs.readFile(files, (err, fileData) => {
-          if (err) {
-            alert('An error happened during reading file');
-            return;
-          }
-          console.log('File content ' + fileData);
-        });
-      }
     }
   );
 });
