@@ -2,10 +2,7 @@
 
 > (LIMT) Is Microtube Toolkit
 
-
-[![Travis](https://img.shields.io/travis/USER/REPO.svg)](https://travis-ci.org/ZexuanTHU/limt)
-
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ZexuanTHU/limt/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/ZexuanTHU/limt.svg?branch=master)](https://travis-ci.org/ZexuanTHU/limt) [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ZexuanTHU/limt/blob/master/LICENSE)
 
 #### Build Setup
 
