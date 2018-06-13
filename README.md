@@ -5,9 +5,8 @@
 
 [![Travis](https://img.shields.io/travis/USER/REPO.svg)](https://travis-ci.org/ZexuanTHU/limt)
 
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ZexuanTHU/limt/blob/master/LICENSE)
 
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg)]
-(https://github.com/ZexuanTHU/limt/blob/master/LICENSE)
 #### Build Setup
 
 ``` bash
