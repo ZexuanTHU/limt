@@ -18,48 +18,15 @@
             <div style="background: white; padding: 10px;">
               <el-row>
                 <block-tag tag-name="Current MT / MAP Images"></block-tag>
-                <el-col span="4">
-                  <el-card :body-style="{ padding: '0px' }">
-                    <canvas id='mt-img' class="canvas"
-                      height="512px" width="170px"></canvas>
-                    <div style="padding: 14px;">
-                      <span>Meta Data</span>
-                      <div class="bottom clearfix">
-                        <time class="time">{{ currentFileName }}</time>
-                        <br/>
-                        <br/>
-                        <el-button @click="putMTImg">Refresh</el-button>
-                      </div>
-                    </div>
-                  </el-card>
+                <el-col span="10">
+                  <l-mul-canvas header-name="MT Image" buffer="mt_img_buffer">
+                  </l-mul-canvas>
                 </el-col>
-                <el-col span="2">
-                  <p></p>
-                </el-col>
-                <el-col span="4">
-                  <el-card :body-style="{ padding: '0px' }">
-                    <canvas id='map-img' class="canvas"
-                      height="512px" width="170px"></canvas>
-                    <div style="padding: 14px;">
-                      <span>Meta Data</span>
-                      <div class="bottom clearfix">
-                        <time class="time">{{ currentFileName }}</time>
-                        <br/>
-                        <br/>
-                        <el-button @click="putMAPImg">Refresh</el-button>
-                      </div>
-                    </div>
-                  </el-card>
+                <el-col span="10" offset="4">
+                  <l-mul-canvas header-name="MAP Image" buffer="map_img_buffer">
+                  </l-mul-canvas>
                 </el-col>
               </el-row>
-              <br/>
-            </div>
-            <br/>
-            <div style="background: white; padding: 10px;">
-              <block-tag tag-name="mul canvas">
-                <l-mul-canvas></l-mul-canvas>
-              </block-tag>
-              <l-mul-canvas buffer="mt_img_buffer"></l-mul-canvas>
             </div>
           </el-main>
           <el-footer style="background: #e4e4e4;">
@@ -90,11 +57,16 @@ export default {
         'intervaltime 1s_35C--3_',
     };
   },
+  mounted() {
+    this.putMTImg();
+    this.putMAPImg();
+  },
   methods: {
     putMTImg() {
       let c = document.getElementById('mt-img');
       let ctx = c.getContext('2d');
-      let img = this.$store.getters.getBufferByLabel('mt_img_buffer').value[0];
+      let buffer = this.$store.getters.getBufferByLabel('mt_img_buffer');
+      let img = buffer.value[0];
       let imgClamp = new Uint8ClampedArray(img);
       console.log(imgClamp.length);
       let imgData = new ImageData(imgClamp, 2 * 85, 2 * 256);

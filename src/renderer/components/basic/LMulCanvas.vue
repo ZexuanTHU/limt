@@ -1,24 +1,61 @@
 <template>
-  <div>
-    <canvas :id="'layer' + currentLayer" height="512" width="170"></canvas>
-    <button @click="last">-</button>
-    <button @click="next">+</button>
-    <p>current Layer: {{currentLayer}}</p>
-    <el-slider
-      v-model="currentLayer"
-      show-input>
-    </el-slider>
-  </div>
+  <el-card :body-style="{ padding: '0px' }" shadow="never">
+    <div slot="header" class="clearfix">
+      <span>{{headerName}}</span>
+      <el-tooltip content="Done">
+        <el-button style="float: right; padding: 5px;" circle
+                    icon="el-icon-check" type="success">
+        </el-button>
+      </el-tooltip>
+    </div>
+    <br/>
+    <el-row>
+      <el-col span="10" offset="1">
+        <el-card :body-style="elcardStyle" shadow="hover">
+        <canvas
+          :id="'layer' + currentLayer"
+          :width="imgWidth[currentLayer - 1]"
+          :height="imgHeight[currentLayer - 1]">
+        </canvas>
+        </el-card>
+      </el-col>
+      <el-col span="10" offset="2">
+        <el-card shadow="hover">
+          <span class="nobr">
+            <p>Layer:
+              <el-input-number v-model="currentLayer" size="mini">
+              </el-input-number>
+            </p>
+          </span>
+        {{imgWidth[currentLayer - 1]}}
+        {{imgHeight[currentLayer - 1]}}
+        {{currentLayer}}
+        </el-card>
+      </el-col>
+    </el-row>
+    <div style="padding: 14px;">
+      <span>Meta Data</span>
+      <div class="bottom clearfix">
+        <time class="time">{{ currentFileName }}</time>
+      </div>
+    </div>
+  </el-card>
 </template>
 
 <script>
 export default {
   props: [
     'buffer',
+    'headerName',
   ],
   data() {
     return {
-      currentLayer: 0,
+      currentLayer: 1,
+      elcardStyle: {
+        padding: 0,
+        width: '170px',
+        height: '512px',
+      },
     };
   },
   computed: {
@@ -28,9 +65,15 @@ export default {
     imgLayersNum() {
       return this.imgBuffer.value.length;
     },
+    imgWidth() {
+      return this.imgBuffer.width;
+    },
+    imgHeight() {
+      return this.imgBuffer.height;
+    },
   },
   created() {
-    this.putMTImg();
+    this.putMTImg('layer' + this.currentLayer);
   },
   watch: {
     currentLayer() {
@@ -61,3 +104,30 @@ export default {
   },
 };
 </script>
+
+<style>
+.nobr {
+  white-space: nowrap;
+}
+
+.text {
+  font-size: 14px;
+}
+
+.item {
+  margin-bottom: 18px;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both;
+}
+
+.box-card {
+  width: 480px;
+}
+</style>

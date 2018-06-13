@@ -8,7 +8,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules,
-  strict: process.env.NODE_ENV !== 'production',
+  strict: process.env.NODE_ENV === 'production',
   state: {
     gb: [
       {
@@ -103,11 +103,15 @@ export default new Vuex.Store({
         key: 0,
         label: 'mt_img_buffer',
         value: null,
+        width: null,
+        height: null,
       },
       {
         key: 1,
         label: 'map_img_buffer',
         value: null,
+        width: null,
+        height: null,
       },
     ],
   },
@@ -148,13 +152,17 @@ export default new Vuex.Store({
       let MT_IMG_BUFFER = state.imgBuffer.find(
         (gbVal) => gbVal.label === 'mt_img_buffer'
       );
-      MT_IMG_BUFFER.value = payload;
+      MT_IMG_BUFFER.value = payload.rgba;
+      MT_IMG_BUFFER.width = payload.width;
+      MT_IMG_BUFFER.height = payload.height;
     },
     LOAD_MAP_IMG_BUFFER(state, payload) {
       let MAP_IMG_BUFFER = state.imgBuffer.find(
         (gbVal) => gbVal.label === 'map_img_buffer'
       );
-      MAP_IMG_BUFFER.value = payload;
+      MAP_IMG_BUFFER.value = payload.rgba;
+      MAP_IMG_BUFFER.width = payload.width;
+      MAP_IMG_BUFFER.height = payload.height;
     },
   },
 });

@@ -149,18 +149,26 @@ export default {
           }
           console.log(data);
           let rgba = [];
+          let width = [];
+          let height = [];
           if (data) {
             let ifds = UTIF.decode(data);
             UTIF.decodeImages(data, ifds);
             for (let i = 0; i < ifds.length; i++) {
+              width[i] = ifds[i].width;
+              height[i] = ifds[i].height;
               rgba[i] = UTIF.toRGBA8(ifds[i]);
-              // console.log(rgba[i]);
             }
             console.log('convert done');
           }
 
           // commit 'LOAD_MT_IMG_BUFFER" from rgbArray
-          this.$store.commit('LOAD_MT_IMG_BUFFER', rgba);
+          let payload = {
+            width: width,
+            height: height,
+            rgba: rgba,
+          };
+          this.$store.commit('LOAD_MT_IMG_BUFFER', payload);
           console.log('commit done');
           console.log(rgba);
         });
@@ -180,17 +188,26 @@ export default {
           }
           console.log(data);
           let rgba = [];
+          let width = [];
+          let height = [];
           if (data) {
             let ifds = UTIF.decode(data);
             UTIF.decodeImages(data, ifds);
             for (let i = 0; i < ifds.length; i++) {
+              width[i] = ifds[i].width;
+              height[i] = ifds[i].height;
               rgba[i] = UTIF.toRGBA8(ifds[i]);
             }
             console.log('convert done');
           }
 
           // commit 'LOAD_MAP_IMG_BUFFER" from rgbArray
-          this.$store.commit('LOAD_MAP_IMG_BUFFER', rgba);
+          let payload = {
+            width: width,
+            height: height,
+            rgba: rgba,
+          };
+          this.$store.commit('LOAD_MAP_IMG_BUFFER', payload);
           console.log('commit done');
           console.log(rgba);
         });
