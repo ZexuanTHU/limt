@@ -10,16 +10,31 @@
     </div>
     <br/>
     <el-row>
-      <el-col span="10" offset="1">
+      <el-col span="12" offset="1">
+        <block-tag tag-name="Image"></block-tag>
         <el-card :body-style="elcardStyle" shadow="hover">
-        <canvas
-          :id="'layer' + currentLayer"
-          :width="imgWidth[currentLayer - 1]"
-          :height="imgHeight[currentLayer - 1]">
-        </canvas>
+          <el-row>
+            <el-col span="12">
+              <canvas
+                :id="'layer' + currentLayer"
+                :width="imgWidth[currentLayer - 1]"
+                :height="imgHeight[currentLayer - 1]"
+                @mousemove="zoom">
+              </canvas>
+            </el-col>
+            <el-col span="12">
+              <canvas
+                :id="'layerzoom' + currentLayer"
+                width="120px"
+                height="120px"
+                style="border: 1px solid white">
+              </canvas>
+            </el-col>
+          </el-row>
         </el-card>
       </el-col>
-      <el-col span="10" offset="2">
+      <el-col span="8" offset="2">
+        <block-tag tag-name="Actions"></block-tag>
         <el-card shadow="hover">
           <el-checkbox-group v-model="rgbOption" size="mini">
             <el-checkbox-button
@@ -28,6 +43,12 @@
              :key="c">{{c}}
             </el-checkbox-button>
           </el-checkbox-group>
+          <br/>
+          <el-switch
+            v-model="ifZoomSmoothing"
+            active-text="Zoom Smoothing"
+          >
+          </el-switch>
           <el-slider
             v-model="currentLayer"
             max="900"
@@ -55,6 +76,9 @@
               v-model="imgHeight[currentLayer - 1]" size="mini" readonly>
                 <template slot="prepend">Height</template>
             </el-input>
+          <br/>
+          <br/>
+          <slot name="l-add-m-t-line"></slot>
         </el-card>
       </el-col>
     </el-row>
@@ -68,6 +92,9 @@
 </template>
 
 <script>
+import BlockTag from './BlockTag';
+import LCanvas from './LCanvas';
+
 const rgbOptions = ['R', 'G', 'B'];
 export default {
   props: [
@@ -79,7 +106,11 @@ export default {
       currentLayer: 1,
       rgbOption: ['R'],
       rgb: rgbOptions,
+      ifZoomSmoothing: true,
     };
+  },
+  components: {
+    BlockTag, LCanvas,
   },
   computed: {
     imgBuffer() {
@@ -133,6 +164,26 @@ export default {
         let imgData = new ImageData(imgClamp, 2 * 85, 2 * 256);
         ctx.putImageData(imgData, 0, 0);
       });
+    },
+    zoom(event) {
+      let cID = String('layer' + (this.currentLayer));
+      let zId = String('layerzoom' + (this.currentLayer));
+      let canvas = document.getElementById(cID);
+      let zoomctx = document.getElementById(zId).getContext('2d');
+      let x = event.layerX;
+      let y = event.layerY;
+      if (this.ifZoomSmoothing) {
+        zoomctx.imageSmoothingEnabled = this.ifZoomSmoothing;
+        zoomctx.mozImageSmoothingEnabled = this.ifZoomSmoothing;
+        zoomctx.webkitImageSmoothingEnabled = this.ifZoomSmoothing;
+        zoomctx.msImageSmoothingEnabled = this.ifZoomSmoothing;
+      }
+      zoomctx.drawImage(canvas,
+        Math.abs(x - 5),
+        Math.abs(y - 5),
+        10, 10,
+        0, 0,
+        200, 200);
     },
   },
 };
