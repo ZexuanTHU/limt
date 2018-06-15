@@ -66,19 +66,20 @@
           </el-input>
           <br/>
           <br/>
-            <el-input
-              v-model="imgWidth[currentLayer - 1]" size="mini" readonly>
-              <template slot="prepend">Width</template>
-            </el-input>
+          <el-input
+            v-model="imgWidth[currentLayer - 1]" size="mini" readonly>
+            <template slot="prepend">Width</template>
+          </el-input>
           <br/>
           <br/>
-            <el-input
-              v-model="imgHeight[currentLayer - 1]" size="mini" readonly>
-                <template slot="prepend">Height</template>
-            </el-input>
+          <el-input
+            v-model="imgHeight[currentLayer - 1]" size="mini" readonly>
+              <template slot="prepend">Height</template>
+          </el-input>
           <br/>
           <br/>
-          <slot name="l-add-m-t-line"></slot>
+          <l-add-m-t-line v-if="this.$route.path === '/addmtline'">
+          </l-add-m-t-line>
         </el-card>
       </el-col>
     </el-row>
@@ -93,7 +94,7 @@
 
 <script>
 import BlockTag from './BlockTag';
-import LCanvas from './LCanvas';
+import LAddMTLine from './LAddMTLine';
 
 const rgbOptions = ['R', 'G', 'B'];
 export default {
@@ -110,7 +111,7 @@ export default {
     };
   },
   components: {
-    BlockTag, LCanvas,
+    BlockTag, LAddMTLine,
   },
   computed: {
     imgBuffer() {

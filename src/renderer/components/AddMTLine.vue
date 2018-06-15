@@ -13,8 +13,10 @@
             <el-row>
               <el-col :span="16">
                 <block-tag tag-name="Image"></block-tag>
-                <l-mul-canvas header-name="MT Image" buffer="mt_img_buffer">
-                  <l-add-m-t-line slot="l-add-m-t-line"></l-add-m-t-line>
+                <l-mul-canvas
+                  header-name="MT Image"
+                  buffer="mt_img_buffer"
+                >
                 </l-mul-canvas>
               </el-col>
             </el-row>
@@ -36,7 +38,6 @@
   import BlockTag from './basic/BlockTag';
   import LMulCanvas from './basic/LMulCanvas.vue';
   import LAddMTLine from './basic/LAddMTLine.vue';
-  import LCanvas from './basic/LCanvas.vue';
 
   export default {
     data() {
@@ -47,7 +48,7 @@
       };
     },
     components: {
-      LHeader, LSide, LFooter, BlockTag, LMulCanvas, LAddMTLine, LCanvas,
+      LHeader, LSide, LFooter, BlockTag, LMulCanvas, LAddMTLine,
     },
     methods: {
     },
