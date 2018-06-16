@@ -13,24 +13,26 @@
       <el-col span="12" offset="1">
         <block-tag tag-name="Image"></block-tag>
         <el-card :body-style="elcardStyle" shadow="hover">
-          <el-row>
-            <el-col span="12">
+          <!-- <el-row> -->
+            <!-- <el-col span="12"> -->
               <canvas
-                :id="'layer' + currentLayer"
+                :id="cID"
                 :width="imgWidth[currentLayer - 1]"
                 :height="imgHeight[currentLayer - 1]"
-                @mousemove="zoom">
+                @mousemove="handleMouseMove">
               </canvas>
-            </el-col>
-            <el-col span="12">
+            <!-- </el-col> -->
+            <!-- <el-col span="12"> -->
               <canvas
-                :id="'layerzoom' + currentLayer"
-                width="120px"
-                height="120px"
-                style="border: 1px solid white">
+                :id="zID"
+                class="zoom-canvas"
+                width="200px"
+                height="200px"
+                style="border: 1px solid white"
+              >
               </canvas>
-            </el-col>
-          </el-row>
+            <!-- </el-col> -->
+          <!-- </el-row> -->
         </el-card>
       </el-col>
       <el-col span="8" offset="2">
@@ -51,8 +53,7 @@
           </el-switch>
           <el-slider
             v-model="currentLayer"
-            max="900"
-            show-tooltip="true"
+            :max="imgLayersNum"
           >
           </el-slider>
           <el-input
@@ -114,6 +115,12 @@ export default {
     BlockTag, LAddMTLine,
   },
   computed: {
+    cID() {
+      return 'layer' + this.currentLayer;
+    },
+    zID() {
+      return 'layerzoom' + this.currentLayer;
+    },
     imgBuffer() {
       return this.$store.getters.getBufferByLabel(this.buffer);
     },
@@ -141,12 +148,11 @@ export default {
     },
   },
   created() {
-    this.putMTImg('layer' + this.currentLayer);
+    this.putMTImg(this.cID);
   },
   watch: {
     currentLayer() {
-      let cID = String('layer' + (this.currentLayer));
-      this.putMTImg(cID);
+      this.putMTImg(this.cID);
     },
   },
   methods: {
@@ -161,7 +167,6 @@ export default {
     putMTImg(cID) {
       let img = this.imgBuffer.value[this.currentLayer - 1];
       this.$nextTick(function() {
-        console.log(cID);
         let c = document.getElementById(cID);
         let ctx = c.getContext('2d');
         let imgClamp = new Uint8ClampedArray(img);
@@ -169,25 +174,37 @@ export default {
         ctx.putImageData(imgData, 0, 0);
       });
     },
-    zoom(event) {
-      let cID = String('layer' + (this.currentLayer));
-      let zId = String('layerzoom' + (this.currentLayer));
-      let canvas = document.getElementById(cID);
-      let zoomctx = document.getElementById(zId).getContext('2d');
-      let x = event.layerX;
-      let y = event.layerY;
+    zoom(x, y, canvas, zID) {
+      let zoomDiv = document.getElementById(this.zID);
+      let zoomctx = zoomDiv.getContext('2d');
+
       if (this.ifZoomSmoothing) {
         zoomctx.imageSmoothingEnabled = this.ifZoomSmoothing;
         zoomctx.mozImageSmoothingEnabled = this.ifZoomSmoothing;
         zoomctx.webkitImageSmoothingEnabled = this.ifZoomSmoothing;
         zoomctx.msImageSmoothingEnabled = this.ifZoomSmoothing;
       }
+      // zoomDiv.style.left = x + 'px';
+      zoomDiv.style.top = y + 'px';
       zoomctx.drawImage(canvas,
         Math.abs(x - 5),
         Math.abs(y - 5),
         10, 10,
         0, 0,
         200, 200);
+    },
+    handleMouseMove(event) {
+      let canvas = document.getElementById(this.cID);
+      let x = event.layerX;
+      let y = event.layerY;
+      this.zoom(x, y, canvas, this.zID);
+      if (this.ifDrawingLine) {
+        let ctx = canvas.getContext('2d');
+        ctx.beginPath();
+        ctx.lineTo(x, y);
+        ctx.strokeStyle = '#F63E02';
+        ctx.stroke();
+      }
     },
   },
 };
@@ -217,5 +234,10 @@ export default {
 
 .box-card {
   width: 480px;
+}
+
+.zoom-canvas {
+  border-radius: 100px;
+  position: absolute;
 }
 </style>
