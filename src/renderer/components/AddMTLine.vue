@@ -20,7 +20,6 @@
                 </l-mul-canvas>
               </el-col>
             </el-row>
-            <l-canvas></l-canvas>
           </div>
         </el-main>
         <el-footer style="background: #e4e4e4">

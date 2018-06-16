@@ -114,6 +114,13 @@ export default new Vuex.Store({
         height: null,
       },
     ],
+    mulCanvasState: [
+      {
+        key: 0,
+        label: 'if_drawing_line',
+        value: false,
+      },
+    ],
   },
   getters: {
     getGBByLabel: (state) => (label) => {
@@ -121,6 +128,9 @@ export default new Vuex.Store({
     },
     getBufferByLabel: (state) => (label) => {
       return state.imgBuffer.find((buffer) => buffer.label === label);
+    },
+    getMulCanvasState: (state) => (label) => {
+      return state.mulCanvasState.find((cState) => cState.label === label);
     },
   },
   mutations: {
@@ -163,6 +173,12 @@ export default new Vuex.Store({
       MAP_IMG_BUFFER.value = payload.rgba;
       MAP_IMG_BUFFER.width = payload.width;
       MAP_IMG_BUFFER.height = payload.height;
+    },
+    TOGGLE_MUL_CANVAS_STATE(state, payload) {
+      let MUL_CANVAS_STATE = state.mulCanvasState.find(
+        (mCanvas) => mCanvas.label === 'if_drawing_line'
+      );
+      MUL_CANVAS_STATE.value = payload;
     },
   },
 });

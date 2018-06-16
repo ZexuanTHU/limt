@@ -136,6 +136,9 @@ export default {
     currentLayerStep() {
       return `${this.currentLayer} / ${this.imgLayersNum}`;
     },
+    ifDrawingLine() {
+      return this.$store.getters.getMulCanvasState('if_drawing_line').value;
+    },
   },
   created() {
     this.putMTImg('layer' + this.currentLayer);
