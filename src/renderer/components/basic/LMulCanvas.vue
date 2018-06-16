@@ -19,7 +19,9 @@
                 :id="cID"
                 :width="imgWidth[currentLayer - 1]"
                 :height="imgHeight[currentLayer - 1]"
-                @mousemove="handleMouseMove">
+                @mousemove="handleMouseMove"
+                @mouseup="ifMouseDown = false"
+                @mousedown="ifMouseDown = true">
               </canvas>
             <!-- </el-col> -->
             <!-- <el-col span="12"> -->
@@ -109,6 +111,7 @@ export default {
       rgbOption: ['R'],
       rgb: rgbOptions,
       ifZoomSmoothing: true,
+      ifMouseDown: false,
     };
   },
   components: {
@@ -193,17 +196,22 @@ export default {
         0, 0,
         200, 200);
     },
+    drawLine(x, y, canvas) {
+      if (this.ifMouseDown) {
+        let ctx = canvas.getContext('2d');
+        ctx.lineTo(x, y);
+        ctx.strokeStyle = '#F63E02';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    },
     handleMouseMove(event) {
       let canvas = document.getElementById(this.cID);
       let x = event.layerX;
       let y = event.layerY;
       this.zoom(x, y, canvas, this.zID);
       if (this.ifDrawingLine) {
-        let ctx = canvas.getContext('2d');
-        ctx.beginPath();
-        ctx.lineTo(x, y);
-        ctx.strokeStyle = '#F63E02';
-        ctx.stroke();
+        this.drawLine(x, y, canvas);
       }
     },
   },

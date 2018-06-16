@@ -1,18 +1,28 @@
 <template>
   <el-button-group>
+    <nobr>
     <el-button
-      type="primary"
-      size="mini"
-      icon="el-icon-plus">
-      Add Line
-     </el-button>
-     <el-button
       type="primary"
       size="mini"
       icon="el-icon-edit"
       @click="toggleIfDrawingLine">
-      Draw Line
+      Draw
      </el-button>
+     <el-button
+      type="primary"
+      size="mini"
+      icon="el-icon-delete"
+      @click="resetLine">
+      Reset
+     </el-button>
+    <el-button
+      type="success"
+      size="mini"
+      icon="el-icon-plus"
+      @click="addLine">
+      Submit
+     </el-button>
+    </nobr>
   </el-button-group>
 </template>
 
@@ -25,7 +35,13 @@ export default {
   methods: {
     toggleIfDrawingLine() {
       this.$store.commit('TOGGLE_MUL_CANVAS_STATE', true);
-      console.log(this.$store.getters.getMulCanvasState('if_drawing_line'));
+    },
+    addLine() {
+      this.$message({
+        showClose: true,
+        message: 'Drawed line already submitted!',
+        type: 'success',
+      });
     },
   },
 };
