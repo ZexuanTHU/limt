@@ -18,11 +18,11 @@
             <div style="background: white; padding: 10px;">
               <el-row>
                 <block-tag tag-name="Current MT / MAP Images"></block-tag>
-                <el-col span="11">
+                <el-col :span="11.5">
                   <l-mul-canvas header-name="MT Image" buffer="mt_img_buffer">
                   </l-mul-canvas>
                 </el-col>
-                <el-col span="11" offset="2">
+                <el-col :span="11.5" :offset="1">
                   <l-mul-canvas header-name="MAP Image" buffer="map_img_buffer">
                   </l-mul-canvas>
                 </el-col>

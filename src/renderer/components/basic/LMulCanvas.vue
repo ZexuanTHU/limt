@@ -10,7 +10,7 @@
     </div>
     <br/>
     <el-row>
-      <el-col span="12" offset="1">
+      <el-col :span=8 :offset=1>
         <block-tag tag-name="Image"></block-tag>
         <el-card :body-style="elcardStyle" shadow="hover">
           <!-- <el-row> -->
@@ -28,8 +28,8 @@
               <canvas
                 :id="zID"
                 class="zoom-canvas"
-                width="200px"
-                height="200px"
+                width="150px"
+                height="150px"
                 style="border: 1px solid white"
               >
               </canvas>
@@ -37,59 +37,73 @@
           <!-- </el-row> -->
         </el-card>
       </el-col>
-      <el-col span="8" offset="2">
+      <el-col :span=13 :offset=1>
         <block-tag tag-name="Actions"></block-tag>
         <el-card shadow="hover">
-          <el-checkbox-group v-model="rgbOption" size="mini">
-            <el-checkbox-button
-             v-for="c in rgb"
-             :label="c"
-             :key="c">{{c}}
-            </el-checkbox-button>
-          </el-checkbox-group>
-          <br/>
-          <el-switch
-            v-model="ifZoomSmoothing"
-            active-text="Zoom Smoothing"
-          >
-          </el-switch>
-          <el-slider
-            v-model="currentLayer"
-            :max="imgLayersNum"
-          >
-          </el-slider>
-          <el-input
-            readonly
-            v-model="currentLayerStep"
-            size="mini"
-            :min="1"
-            :max="imgLayersNum"
-          >
-            <template slot="prepend">Layer</template>
-          </el-input>
-          <br/>
-          <br/>
-          <el-input
-            v-model="imgWidth[currentLayer - 1]" size="mini" readonly>
-            <template slot="prepend">Width</template>
-          </el-input>
-          <br/>
-          <br/>
-          <el-input
-            v-model="imgHeight[currentLayer - 1]" size="mini" readonly>
-              <template slot="prepend">Height</template>
-          </el-input>
-          <br/>
-          <br/>
-          <l-add-m-t-line v-if="this.$route.path === '/addmtline'">
-          </l-add-m-t-line>
+          <el-form>
+            <el-form-item>
+              <el-checkbox-group v-model="rgbOption" size="mini">
+                <el-checkbox-button
+                v-for="c in rgb"
+                :label="c"
+                :key="c">{{c}}
+                </el-checkbox-button>
+              </el-checkbox-group>
+            </el-form-item>
+            <el-form-item>
+              <el-switch
+                v-model="ifZoomSmoothing"
+                active-text="Zoom Smoothing"
+              >
+              </el-switch>
+            </el-form-item>
+            <el-form-item>
+                  <el-tag type="info" size="medium">Layer</el-tag>
+                  <!-- <el-input
+                    readonly
+                    v-model="currentLayerStep"
+                    size="mini"
+                    :min="1"
+                    :max="imgLayersNum"
+                  >
+                  </el-input> -->
+                  <el-slider
+                    v-model="currentLayer"
+                    :max="imgLayersNum"
+                    show-input
+                  >
+                  </el-slider>
+            </el-form-item>
+            <el-form-item>
+              <el-row>
+                <el-col :span="11">
+                  <el-tag type="info" size="medium">Width</el-tag>
+                  <el-input
+                    v-model="imgWidth[currentLayer - 1]" size="mini" readonly>
+                  </el-input>
+                </el-col>
+                <el-col :span="11" :offset="2">
+                  <el-tag type="info" size="medium">Height</el-tag>
+                  <el-input
+                    v-model="imgHeight[currentLayer - 1]" size="mini" readonly>
+                  </el-input>
+                </el-col>
+              </el-row>
+            </el-form-item>
+            <el-form-item>
+              <l-add-m-t-line v-if="this.$route.path === '/addmtline'">
+              </l-add-m-t-line>
+            </el-form-item>
+            <el-form-item>
+              <l-add-kymograph v-if="this.$route.path === '/addkymograph'">
+              </l-add-kymograph>
+            </el-form-item>
+          </el-form>
         </el-card>
       </el-col>
     </el-row>
     <div style="padding: 14px;">
-      <span>Meta Data</span>
       <div class="bottom clearfix">
-        <time class="time">{{ currentFileName }}</time>
       </div>
     </div>
   </el-card>
@@ -98,6 +112,7 @@
 <script>
 import BlockTag from './BlockTag';
 import LAddMTLine from './LAddMTLine';
+import LAddKymograph from './LAddKymograph';
 
 const rgbOptions = ['R', 'G', 'B'];
 export default {
@@ -115,7 +130,7 @@ export default {
     };
   },
   components: {
-    BlockTag, LAddMTLine,
+    BlockTag, LAddMTLine, LAddKymograph,
   },
   computed: {
     cID() {
@@ -148,6 +163,15 @@ export default {
     },
     ifDrawingLine() {
       return this.$store.getters.getMulCanvasState('if_drawing_line').value;
+    },
+    contrast() {
+      return this.$store.getters.getMulCanvasState('contrast').value;
+    },
+    brightness() {
+      return this.$store.getters.getMulCanvasState('brightness').value;
+    },
+    kymographNum() {
+      return this.$store.getters.getMulCanvasState('kymograph_num').value;
     },
   },
   created() {
@@ -214,6 +238,62 @@ export default {
         this.drawLine(x, y, canvas);
       }
     },
+    handleBrightnessContrast(__src, __brightness, __contrast) {
+      if (__src.type === 'CV_RGBA') {
+        let sData = __src.data;
+        let width = __src.col;
+        let height = __src.row;
+        let dst = new Mat(height, width, CV_RGBA);
+        let dData = dst.data;
+        let brightness = Math.max(-255, Math.min(255, __brightness || 0));
+        let contrast = Math.max(-255, Math.min(255, __contrast || 0));
+
+        let gray = cvtColor(__src, CV_RGBA2GRAY);
+        let allValue = 0;
+        let gData = gray.data;
+        let [y, x, c] = [null, null, null];
+
+        for (y = height; y--;) {
+          for (x = width; x--;) {
+            allValue += gData[y * width + x];
+          }
+        }
+
+        let tmp = (allValue / (height * width)) | 0;
+        let [offset, gAverage] = [tmp, tmp];
+
+        for (y = height; y--;) {
+          for (x = width; x--;) {
+            offset = (y * width + x) * 4;
+            dData[offset] = sData[offset] + brightness;
+            dData[offset + 1] = sData[offset + 1] + brightness;
+            dData[offset + 2] = sData[offset + 2] + brightness;
+
+            if (contrast >= 0) {
+              for (c = 3; c--;) {
+                if (dData[offset + c] >= gAverage) {
+                  dData[offset + c] = dData[offset + c]
+                    + (255 - gAverage) * contrast / 255;
+                } else {
+                  dData[offset + c] = dData[offset + c]
+                    - (gAverage * contrast / 255);
+                }
+              }
+            } else {
+              dData[offset] = dData[offset] + (dData[offset] - gAverage)
+                * contrast / 255;
+              dData[offset + 1] = dData[offset + 1] + (dData[offset + 1]
+                - gAverage) * contrast / 255;
+              dData[offset + 2] = dData[offset + 2] + (dData[offset + 2]
+                - gAverage) * contrast / 255;
+            }
+
+            dData[offset + 3] = 255;
+          }
+        }
+      }
+      return dst;
+    },
   },
 };
 </script>
@@ -245,7 +325,7 @@ export default {
 }
 
 .zoom-canvas {
-  border-radius: 100px;
+  border-radius: 75px;
   position: absolute;
 }
 </style>

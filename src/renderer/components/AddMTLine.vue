@@ -11,7 +11,7 @@
         <el-main style="background-color: #e4e4e4">
           <div style="background: white; padding: 10px;">
             <el-row>
-              <el-col :span="16">
+              <el-col :span="20">
                 <block-tag tag-name="Image"></block-tag>
                 <l-mul-canvas
                   header-name="MT Image"

@@ -120,6 +120,21 @@ export default new Vuex.Store({
         label: 'if_drawing_line',
         value: false,
       },
+      {
+        key: 1,
+        label: 'contrast',
+        value: 5,
+      },
+      {
+        key: 2,
+        label: 'brightness',
+        value: 1,
+      },
+      {
+        key: 3,
+        label: 'kymograph_num',
+        value: 1,
+      },
     ],
   },
   getters: {
@@ -179,6 +194,24 @@ export default new Vuex.Store({
         (mCanvas) => mCanvas.label === 'if_drawing_line'
       );
       MUL_CANVAS_STATE.value = payload;
+    },
+    CHANGE_CONTRAST(state, payload) {
+      let CONTRAST = state.mulCanvasState.find(
+        (mCanvas) => mCanvas.label === 'contrast'
+      );
+      CONTRAST.value = payload;
+    },
+    CHANGE_BRIGHTNESS(state, payload) {
+      let BRIGHT = state.mulCanvasState.find(
+        (mCanvas) => mCanvas.label === 'brightness'
+      );
+      BRIGHT.value = payload;
+    },
+    CHANGE_KYMOGRAPH_NUM(state, payload) {
+      let KYMOGRAPH_NUM = state.mulCanvasState.find(
+        (mCanvas) => mCanvas.label === 'kymograph_num'
+      );
+      KYMOGRAPH_NUM.value = payload;
     },
   },
 });
